@@ -48,6 +48,7 @@
     </distributionManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <scala.major.version>2.11</scala.major.version>
         <scala.minor.version>8</scala.minor.version>
