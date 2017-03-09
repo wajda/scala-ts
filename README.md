@@ -57,5 +57,12 @@ tl;dr
                 <argument>my.model.MyOtherTopLevelCaseClassesOrTraits</argument>
             </arguments>
         </configuration>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.wajda</groupId>
+                <artifactId>scala-ts_2.11</artifactId>
+                <version>0.3.2.2</version>
+            </dependency>
+        </dependencies>
     </plugin>
 ```
