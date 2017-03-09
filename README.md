@@ -14,8 +14,8 @@ tl;dr
 ```
 <dependency>
   <groupId>com.github.wajda</groupId>
-  <artifactId>lzstring4java</artifactId>
-  <version>0.1</version>
+  <artifactId>scala-ts_2.11</artifactId>
+  <version>0.3.2.2</version>
 </dependency>
 ```
 
