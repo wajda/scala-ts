@@ -47,6 +47,16 @@ class ScalaParserSpec extends FlatSpec with Matchers {
     parsed should have length 6
   }
 
+  it should "correctly hadle either types" in {
+    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass7Type))
+    val expected = Entity(
+      "TestClass7",
+      List(EntityMember("name", UnionRef(CaseClassRef("TestClass1", List()),CaseClassRef("TestClass1B", List())))),
+      List("T")
+    )
+    parsed should contain(expected)
+  }
+
 }
 
 object TestTypes {
@@ -58,12 +68,15 @@ object TestTypes {
   val TestClass4Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass4")
   val TestClass5Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass5")
   val TestClass6Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass6")
+  val TestClass7Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass7")
 
   private def typeFromName(name: String) = mirror.staticClass(name).toType
 
   trait TestClass1 {
     val name: String
   }
+
+  case class TestClass1B(foo: String)
 
   case class TestClass2[T](name: T)
 
@@ -73,6 +86,9 @@ object TestTypes {
 
   case class TestClass5[T](name: Option[T])
 
+
   case class TestClass6[T](name: Option[TestClass5[List[Option[TestClass4[String]]]]], age: TestClass3[TestClass2[TestClass1]])
+
+  case class TestClass7[T](name: Either[TestClass1, TestClass1B])
 
 }

@@ -9,7 +9,7 @@ import com.mpc.scalats.core.TypeScriptGenerator
 
 case class Foo[T, Q](a: T, b: List[Q])
 
-case class Bar(b: Foo[String, String], c: List[Foo[Int, String]])
+case class Bar(b: Foo[String, String], c: List[Foo[Int, String]], d: Map[String, Foo[Boolean, BigDecimal]])
 
 case class Xyz(bars: Option[List[Option[Bar]]])
 

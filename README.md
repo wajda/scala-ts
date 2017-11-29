@@ -15,7 +15,7 @@ tl;dr
 <dependency>
   <groupId>com.github.wajda</groupId>
   <artifactId>scala-ts_2.11</artifactId>
-  <version>0.3.2.2</version>
+  <version>0.4.0.0</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ tl;dr
             <dependency>
                 <groupId>com.github.wajda</groupId>
                 <artifactId>scala-ts_2.11</artifactId>
-                <version>0.3.2.2</version>
+                <version>0.4.0.0</version>
             </dependency>
         </dependencies>
     </plugin>
