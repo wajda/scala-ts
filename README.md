@@ -11,22 +11,22 @@ tl;dr
 - Scala 2.11
 
 ##### Getting started using Maven
-```
+```xml
 <dependency>
   <groupId>com.github.wajda</groupId>
   <artifactId>scala-ts_2.11</artifactId>
-  <version>0.4.1.0</version>
+  <version>0.4.1.1</version>
 </dependency>
 ```
 
 ##### Usage
 ###### ... in a command Line
-```
-    java -cp ... com.mpc.scalats.CLI
+```shell
+    java -jar scala-ts-0.4.1.1-dist.jar
 ```
 
 ###### ... as a Maven plugin
-```
+```xml
     <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -61,7 +61,7 @@ tl;dr
             <dependency>
                 <groupId>com.github.wajda</groupId>
                 <artifactId>scala-ts_2.11</artifactId>
-                <version>0.4.1.0</version>
+                <version>0.4.1.1</version>
             </dependency>
         </dependencies>
     </plugin>

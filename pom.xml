@@ -6,7 +6,7 @@
 
     <groupId>com.github.wajda</groupId>
     <artifactId>scala-ts_2.11</artifactId>
-    <version>0.4.1.0</version>
+    <version>0.4.1.1</version>
 
     <name>Scala-ts</name>
     <description>Scala to TypeScript code generator</description>
@@ -184,6 +184,32 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>scala-ts-${project.version}-dist</finalName>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>com.mpc.scalats.CLI</Main-Class>
+                            <Add-Opens>java.base/sun.net.www.protocol.jar</Add-Opens>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
