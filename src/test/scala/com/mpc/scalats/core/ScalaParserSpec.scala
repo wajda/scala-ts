@@ -1,14 +1,15 @@
 package com.mpc.scalats.core
 
 import com.mpc.scalats.core.ScalaModel._
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.reflect.runtime.universe._
 
 /**
  * Created by Milosz on 06.12.2016.
  */
-class ScalaParserSpec extends FlatSpec with Matchers {
+class ScalaParserSpec extends AnyFlatSpec with Matchers {
 
   it should "parse case class with one primitive member" in {
     val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass1Type))
