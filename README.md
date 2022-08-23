@@ -1,5 +1,8 @@
 # scala-ts
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.wajda/scala-ts_2.12/badge.svg)](https://search.maven.org/search?q=g:com.github.wajda)
+
+
 Mavenized version of [miloszpp/scala-ts](https://github.com/miloszpp/scala-ts)
 
 TODO: better documentation is coming.
@@ -15,7 +18,7 @@ tl;dr
 <dependency>
   <groupId>com.github.wajda</groupId>
   <artifactId>scala-ts_2.11</artifactId>
-  <version>0.4.1.1</version>
+  <version>0.4.1.5</version>
 </dependency>
 ```
 
@@ -61,7 +64,7 @@ tl;dr
             <dependency>
                 <groupId>com.github.wajda</groupId>
                 <artifactId>scala-ts_2.11</artifactId>
-                <version>0.4.1.1</version>
+                <version>0.4.1.5</version>
             </dependency>
         </dependencies>
     </plugin>
