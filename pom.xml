@@ -115,7 +115,12 @@
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
                     <args>
+                        <arg>-nobootcp</arg>
                         <arg>-target:jvm-${target.jdk.version}</arg>
+                        <arg>-feature</arg>
+                        <arg>-deprecation</arg>
+                        <arg>-unchecked</arg>
+                        <arg>-Ywarn-numeric-widen</arg>
                     </args>
                 </configuration>
                 <executions>
@@ -132,6 +137,12 @@
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>doc-jar</goal>
                         </goals>
                     </execution>
                 </executions>
