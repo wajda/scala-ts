@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,7 +11,7 @@
 
     <groupId>com.github.wajda</groupId>
     <artifactId>scala-ts_2.11</artifactId>
-    <version>0.4.1.2-SNAPSHOT</version>
+    <version>0.4.1.3-SNAPSHOT</version>
 
     <name>Scala-ts</name>
     <description>Scala to TypeScript code generator</description>
@@ -39,7 +38,8 @@
         <connection>scm:git:git@github.com:wajda/scala-ts.git</connection>
         <developerConnection>scm:git:git@github.com:wajda/scala-ts.git</developerConnection>
         <url>https://github.com/wajda/scala-ts.git</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <distributionManagement>
         <snapshotRepository>
