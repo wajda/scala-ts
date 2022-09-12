@@ -135,7 +135,7 @@ class TypeScriptEmitterSpec
         (Member("ASubObject2", ObjectRef), ObjectValue(List(
           (Member("ASubPrimitive2", NumberRef), PrimitiveValue(222, NumberRef)),
           (Member("ASubSubObject", ObjectRef), ObjectValue(List(
-            (Member("ASubSubPrimitive", NumberRef), PrimitiveValue(333, NumberRef))
+            (Member("ASubSubPrimitive", StringRef), PrimitiveValue("a string", StringRef))
           )))
         )))
       )))
@@ -156,7 +156,7 @@ class TypeScriptEmitterSpec
         |  ASubObject2: {
         |    ASubPrimitive2: 222,
         |    ASubSubObject: {
-        |      ASubSubPrimitive: 333
+        |      ASubSubPrimitive: "a string"
         |    }
         |  }
         |};
