@@ -6,6 +6,10 @@ object TypeScriptModel {
 
   sealed trait TypeRef
 
+  sealed trait Value {
+    def typeRef: TypeRef
+  }
+
   sealed trait AccessModifier
 
   case class CustomTypeRef(name: String, typeArgs: List[TypeRef]) extends TypeRef
@@ -14,17 +18,27 @@ object TypeScriptModel {
 
   case class InterfaceDeclaration(name: String, members: List[Member], typeParams: List[String]) extends Declaration
 
+  case class ConstantDeclaration(member: Member, value: Value) extends Declaration
+
   case class Member(name: String, typeRef: TypeRef)
+
+  case class PrimitiveValue(value: Any, typeRef: TypeRef) extends Value
+
+  case class ObjectValue(members: List[(Member, Value)]) extends Value {
+    override def typeRef: TypeRef = ObjectRef
+  }
 
   case class ClassDeclaration(name: String, constructor: ClassConstructor, typeParams: List[String]) extends Declaration
 
   case class ClassConstructor(parameters: List[ClassConstructorParameter])
 
   case class ClassConstructorParameter(name: String,
-                                       typeRef: TypeRef,
-                                       accessModifier: Option[AccessModifier])
+    typeRef: TypeRef,
+    accessModifier: Option[AccessModifier])
 
   case class UnknownTypeRef(name: String) extends TypeRef
+
+  case object ObjectRef extends TypeRef
 
   case object NumberRef extends TypeRef
 

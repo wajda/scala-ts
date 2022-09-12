@@ -1,8 +1,10 @@
 package com.mpc.scalats.core
 
-import java.io.PrintStream
-
 import com.mpc.scalats.core.TypeScriptModel.AccessModifier.{Private, Public}
+
+import java.io.PrintStream
+import java.util.Date
+import scala.collection.mutable
 
 object TypeScriptEmitter {
 
@@ -14,10 +16,46 @@ object TypeScriptEmitter {
         emitInterfaceDeclaration(decl, out)
       case decl: ClassDeclaration =>
         emitClassDeclaration(decl, out)
+      case decl: ConstantDeclaration =>
+        emitConstant(decl, out)
     }
   }
 
-  private def emitInterfaceDeclaration(decl: InterfaceDeclaration, out: PrintStream) = {
+  private def emitConstant(decl: ConstantDeclaration, out: PrintStream): Unit = {
+    val ConstantDeclaration(Member(name, typeRef), value) = decl
+    assume(typeRef == value.typeRef)
+    out.println(s"export const $name: ${getTypeRefString(typeRef)} = ${emitValue(value, 0)};")
+    out.println()
+  }
+
+  private def emitValue(value: TypeScriptModel.Value, indent: Int): String = {
+    value match {
+      // Primitive value
+      case PrimitiveValue(null, NullRef) => "null"
+      case PrimitiveValue(null, UndefinedRef) => "undefined"
+      case PrimitiveValue(v, StringRef) => s""""$v""""
+      case PrimitiveValue(date: Date, DateRef) => s"new Date(${date.getTime})"
+      case PrimitiveValue(millis: Number, DateRef) => s"new Date($millis)"
+      case PrimitiveValue(v, _) => v.toString
+
+      // Object value
+      case ObjectValue(members) =>
+        val tab = "  "
+        val margin = tab * indent
+        val sb = new mutable.StringBuilder
+        sb.append("{\n")
+        members.zipWithIndex.foreach {
+          case ((member, memberValue), i) =>
+            sb.append(s"$margin$tab${member.name}: ${emitValue(memberValue, indent + 1)}")
+            if (i < members.length - 1) sb.append(",")
+            sb.append("\n")
+        }
+        sb.append(s"$margin}")
+        sb.toString()
+    }
+  }
+
+  private def emitInterfaceDeclaration(decl: InterfaceDeclaration, out: PrintStream): Unit = {
     val InterfaceDeclaration(name, members, typeParams) = decl
     out.print(s"export interface $name")
     emitTypeParams(decl.typeParams, out)
@@ -29,7 +67,7 @@ object TypeScriptEmitter {
     out.println()
   }
 
-  private def emitClassDeclaration(decl: ClassDeclaration, out: PrintStream) = {
+  private def emitClassDeclaration(decl: ClassDeclaration, out: PrintStream): Unit = {
     val ClassDeclaration(name, ClassConstructor(parameters), typeParams) = decl
     out.print(s"export class $name")
     emitTypeParams(decl.typeParams, out)
@@ -49,7 +87,7 @@ object TypeScriptEmitter {
     out.println("}")
   }
 
-  private def emitTypeParams(params: List[String], out: PrintStream) =
+  private def emitTypeParams(params: List[String], out: PrintStream): Unit =
     if (params.nonEmpty) {
       out.print("<")
       out.print(params.mkString(", "))
@@ -61,6 +99,7 @@ object TypeScriptEmitter {
     case BooleanRef => "boolean"
     case StringRef => "string"
     case DateRef | DateTimeRef => "Date"
+    case ObjectRef | DateTimeRef => "object"
     case ArrayRef(innerType) => s"${getTypeRefString(innerType)}[]"
     case CustomTypeRef(name, params) if params.isEmpty => name
     case CustomTypeRef(name, params) if params.nonEmpty =>
