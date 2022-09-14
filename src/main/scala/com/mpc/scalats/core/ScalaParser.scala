@@ -33,8 +33,10 @@ object ScalaParser {
       case _ => List.empty[String]
     }
 
+    val isObject = aType.typeSymbol.isModuleClass
+
     val maybeInstance = maybeInstance0 orElse (
-      if (aType.typeSymbol.isModuleClass) {
+      if (isObject) {
         val moduleSymbol = mirror.staticModule(aType.typeSymbol.fullName)
         Some(mirror.reflectModule(moduleSymbol).instance)
       } else {
@@ -60,11 +62,19 @@ object ScalaParser {
 
         EntityMember(memberName, StructRef, Some(StructValue(moduleMembers: _*)))
     }
-    Entity(
-      aType.typeSymbol.name.toString,
-      members.toList,
-      typeParams
-    )
+
+    if (isObject) {
+      ObjectEntity(
+        aType.typeSymbol.name.toString,
+        members.toList
+      )
+    } else {
+      ClassEntity(
+        aType.typeSymbol.name.toString,
+        members.toList,
+        typeParams
+      )
+    }
   }
 
   private def getInvolvedTypes(alreadyExamined: Set[Type])(scalaType: Type): List[Type] = {

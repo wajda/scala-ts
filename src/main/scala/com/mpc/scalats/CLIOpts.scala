@@ -27,10 +27,6 @@ object CLIOpts {
 
   case object OutFile extends Key[File]("--out")
 
-  case object EmitInterfaces extends Key[Boolean]("--emit-interfaces")
-
-  case object EmitClasses extends Key[Boolean]("--emit-classes")
-
   case object OptionToNullable extends Key[Boolean]("--option-to-nullable")
 
   case object OptionToUndefined extends Key[Boolean]("--option-to-undefined")

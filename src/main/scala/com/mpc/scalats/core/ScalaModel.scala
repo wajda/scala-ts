@@ -16,12 +16,20 @@ object ScalaModel {
 
   case class SeqRef(innerType: TypeRef) extends KnownTypeRef
 
-  case class Entity(name: String, members: List[EntityMember], params: List[String])
+  trait Entity {
+    def name: String
+    def members: List[EntityMember]
+  }
+
+  case class ClassEntity(name: String, members: List[EntityMember], params: List[String]) extends Entity
+
+  case class ObjectEntity(name: String, members: List[EntityMember]) extends Entity
 
   case class EntityMember(name: String, typeRef: TypeRef, valueOpt: Option[Value])
 
   object EntityMember {
     def apply(name: String, typeRef: TypeRef): EntityMember = EntityMember(name, typeRef, None)
+
     def apply(name: String, typeRef: TypeRef, value: Value): EntityMember = EntityMember(name, typeRef, Some(value))
   }
 
@@ -38,6 +46,7 @@ object ScalaModel {
   trait KnownTypeRef extends TypeRef {
     override def isKnown: Boolean = true
   }
+
   case class UnknownTypeRef(name: String) extends TypeRef {
     override def isKnown: Boolean = false
   }

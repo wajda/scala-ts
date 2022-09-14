@@ -25,8 +25,6 @@ object CLI {
     }
 
     val config = Config(
-      emitInterfaces = options contains EmitInterfaces,
-      emitClasses = options contains EmitClasses,
       optionToNullable = options contains OptionToNullable,
       optionToUndefined = options contains OptionToUndefined,
       prependIPrefix = options contains PrependIPrefix
@@ -40,8 +38,6 @@ object CLI {
     args match {
       case Nil => CLIOpts.empty
       case OutFile.key :: outFileName :: restArgs => parseArgs(restArgs) + (OutFile -> new File(outFileName))
-      case EmitInterfaces.key :: restArgs => parseArgs(restArgs) + (EmitInterfaces -> true)
-      case EmitClasses.key :: restArgs => parseArgs(restArgs) + (EmitClasses -> true)
       case OptionToNullable.key :: restArgs => parseArgs(restArgs) + (OptionToNullable -> true)
       case OptionToUndefined.key :: restArgs => parseArgs(restArgs) + (OptionToUndefined -> true)
       case PrependIPrefix.key :: restArgs => parseArgs(restArgs) + (PrependIPrefix -> true)
@@ -56,8 +52,6 @@ object CLI {
       s"""
          |Usage: java com.mpc.scalats.Main
          |        [${OutFile.key} out.ts]    # output file
-         |        [${EmitInterfaces.key}]    # emit interfaces
-         |        [${EmitClasses.key}]       # emit classes
          |        [${OptionToNullable.key}]  # convert Option to nullable
          |        [${PrependIPrefix.key}]    # prefix interface names with I
          |        class_name [class_name ...]"""
