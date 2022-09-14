@@ -2,38 +2,62 @@ package com.mpc.scalats.core
 
 object ScalaModel {
 
-  sealed trait TypeRef
+  sealed trait TypeRef {
+    def isKnown: Boolean
+  }
 
-  case class OptionRef(innerType: TypeRef) extends TypeRef
+  case class OptionRef(innerType: TypeRef) extends KnownTypeRef
 
-  case class UnionRef(innerType: TypeRef, innerType2: TypeRef) extends TypeRef
+  case class UnionRef(innerType: TypeRef, innerType2: TypeRef) extends KnownTypeRef
 
-  case class MapRef(keyType: TypeRef, valueType: TypeRef) extends TypeRef
+  case class MapRef(keyType: TypeRef, valueType: TypeRef) extends KnownTypeRef
 
-  case class CaseClassRef(name: String, typeArgs: List[TypeRef]) extends TypeRef
+  case class CaseClassRef(name: String, typeArgs: List[TypeRef]) extends KnownTypeRef
 
-  case class SeqRef(innerType: TypeRef) extends TypeRef
+  case class SeqRef(innerType: TypeRef) extends KnownTypeRef
 
   case class Entity(name: String, members: List[EntityMember], params: List[String])
 
-  case class EntityMember(name: String, typeRef: TypeRef)
+  case class EntityMember(name: String, typeRef: TypeRef, valueOpt: Option[Value])
 
-  case class UnknownTypeRef(name: String) extends TypeRef
+  object EntityMember {
+    def apply(name: String, typeRef: TypeRef): EntityMember = EntityMember(name, typeRef, None)
+    def apply(name: String, typeRef: TypeRef, value: Value): EntityMember = EntityMember(name, typeRef, Some(value))
+  }
 
-  case class TypeParamRef(name: String) extends TypeRef
+  sealed trait Value {
+    def typeRef: TypeRef
+  }
 
-  case object IntRef extends TypeRef
+  case class SimpleValue(value: Any, typeRef: TypeRef) extends Value
 
-  case object LongRef extends TypeRef
+  case class StructValue(members: EntityMember*) extends Value {
+    override def typeRef: TypeRef = StructRef
+  }
 
-  case object DoubleRef extends TypeRef
+  trait KnownTypeRef extends TypeRef {
+    override def isKnown: Boolean = true
+  }
+  case class UnknownTypeRef(name: String) extends TypeRef {
+    override def isKnown: Boolean = false
+  }
 
-  case object BooleanRef extends TypeRef
+  case class TypeParamRef(name: String) extends KnownTypeRef
 
-  case object StringRef extends TypeRef
+  case object IntRef extends KnownTypeRef
 
-  case object DateRef extends TypeRef
+  case object LongRef extends KnownTypeRef
 
-  case object DateTimeRef extends TypeRef
+  case object DoubleRef extends KnownTypeRef
+
+  case object BooleanRef extends KnownTypeRef
+
+  case object StringRef extends KnownTypeRef
+
+  case object DateRef extends KnownTypeRef
+
+  case object DateTimeRef extends KnownTypeRef
+
+  case object StructRef extends KnownTypeRef
 
 }

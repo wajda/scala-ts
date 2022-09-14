@@ -1,9 +1,11 @@
 package com.mpc.scalats.core
 
 import com.mpc.scalats.core.ScalaModel._
+import com.mpc.scalats.core.ScalaParserSpec.TestTypes
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe._
 
 /**
@@ -48,48 +50,104 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
     parsed should have length 6
   }
 
-  it should "correctly hadle either types" in {
+  it should "correctly handle either types" in {
     val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass7Type))
     val expected = Entity(
       "TestClass7",
-      List(EntityMember("name", UnionRef(CaseClassRef("TestClass1", List()),CaseClassRef("TestClass1B", List())))),
+      List(EntityMember("name", UnionRef(CaseClassRef("TestClass1", List()), CaseClassRef("TestClass1B", List())))),
       List("T")
     )
     parsed should contain(expected)
   }
 
-}
+  it should "parse object alone" in {
+    val parsed = ScalaParser.parseCaseClasses(
+      List(
+        TestTypes.TestObjectType,
+        TestTypes.TestTraitWithCompanionObjectType
+      )
+    )
 
-object TestTypes {
-
-  implicit val mirror = runtimeMirror(getClass.getClassLoader)
-  val TestClass1Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass1")
-  val TestClass2Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass2")
-  val TestClass3Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass3")
-  val TestClass4Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass4")
-  val TestClass5Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass5")
-  val TestClass6Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass6")
-  val TestClass7Type = typeFromName("com.mpc.scalats.core.TestTypes.TestClass7")
-
-  private def typeFromName(name: String) = mirror.staticClass(name).toType
-
-  trait TestClass1 {
-    val name: String
+    parsed should contain theSameElementsAs Seq(
+      Entity(
+        "Foo",
+        List(
+          EntityMember("z", SeqRef(IntRef), SimpleValue(List(1, 2, 3), SeqRef(IntRef))),
+          EntityMember("y", StringRef, SimpleValue("yyy", StringRef))
+        ),
+        Nil),
+      Entity(
+        "TestTraitWithCompanionObject",
+        List(
+          EntityMember("bar", StructRef, StructValue(
+            EntityMember("qux", IntRef, SimpleValue(777, IntRef)),
+            EntityMember("baz", IntRef, SimpleValue(555, IntRef))
+          )),
+          EntityMember("Bar", StructRef, StructValue()),
+          EntityMember("Foo", StructRef, StructValue(
+            EntityMember("z", SeqRef(IntRef), SimpleValue(List(1, 2, 3), SeqRef(IntRef))),
+            EntityMember("y", StringRef, SimpleValue("yyy", StringRef))
+          )),
+          EntityMember("x", IntRef, SimpleValue(42, IntRef))
+        ),
+        Nil)
+    )
   }
 
-  case class TestClass1B(foo: String)
+}
 
-  case class TestClass2[T](name: T)
+object ScalaParserSpec {
+  object TestTypes {
 
-  case class TestClass3[T](name: List[T])
+    implicit val mirror: universe.Mirror = runtimeMirror(getClass.getClassLoader)
 
-  case class TestClass4[T](name: TestClass3[T])
+    private[ScalaParserSpec] lazy val TestClass1Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass1")
+    private[ScalaParserSpec] lazy val TestClass2Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass2")
+    private[ScalaParserSpec] lazy val TestClass3Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass3")
+    private[ScalaParserSpec] lazy val TestClass4Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass4")
+    private[ScalaParserSpec] lazy val TestClass5Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass5")
+    private[ScalaParserSpec] lazy val TestClass6Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass6")
+    private[ScalaParserSpec] lazy val TestClass7Type = classTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestClass7")
+    private[ScalaParserSpec] lazy val TestTraitWithCompanionObjectType = objectTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestTraitWithCompanionObject")
+    private[ScalaParserSpec] lazy val TestObjectType = objectTypeForName("com.mpc.scalats.core.ScalaParserSpec.TestTypes.TestTraitWithCompanionObject.Foo")
 
-  case class TestClass5[T](name: Option[T])
+    private def classTypeForName(name: String): Type = mirror.staticClass(name).toType
+
+    private def objectTypeForName(name: String): Type = mirror.staticModule(name).info
+
+    trait TestClass1 {
+      val name: String
+    }
+
+    case class TestClass1B(foo: String)
+
+    case class TestClass2[T](name: T)
+
+    case class TestClass3[T](name: List[T])
+
+    case class TestClass4[T](name: TestClass3[T])
+
+    case class TestClass5[T](name: Option[T])
 
 
-  case class TestClass6[T](name: Option[TestClass5[List[Option[TestClass4[String]]]]], age: TestClass3[TestClass2[TestClass1]])
+    case class TestClass6[T](name: Option[TestClass5[List[Option[TestClass4[String]]]]], age: TestClass3[TestClass2[TestClass1]])
 
-  case class TestClass7[T](name: Either[TestClass1, TestClass1B])
+    case class TestClass7[T](name: Either[TestClass1, TestClass1B])
 
+    trait TestTraitWithCompanionObject
+
+    object TestTraitWithCompanionObject {
+      val x = 42
+
+      object Foo {
+        val y: String = "yyy"
+        val z: List[Int] = List(1, 2, 3)
+      }
+
+      case class Bar(baz: Int, qux: Int)
+
+      val bar: Bar = Bar(555, 777)
+    }
+
+  }
 }
