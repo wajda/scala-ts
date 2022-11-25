@@ -27,7 +27,8 @@ object CLI {
     val config = Config(
       optionToNullable = options contains OptionToNullable,
       optionToUndefined = options contains OptionToUndefined,
-      prependIPrefix = options contains PrependIPrefix
+      prependIPrefix = options contains PrependIPrefix,
+      emitInterfacesAsTypes = options contains TraitToType
     )
 
     try TypeScriptGenerator.generateFromClassNames(classNames, out = out)(config)
@@ -40,6 +41,7 @@ object CLI {
       case OutFile.key :: outFileName :: restArgs => parseArgs(restArgs) + (OutFile -> new File(outFileName))
       case OptionToNullable.key :: restArgs => parseArgs(restArgs) + (OptionToNullable -> true)
       case OptionToUndefined.key :: restArgs => parseArgs(restArgs) + (OptionToUndefined -> true)
+      case TraitToType.key :: restArgs => parseArgs(restArgs) + (TraitToType -> true)
       case PrependIPrefix.key :: restArgs => parseArgs(restArgs) + (PrependIPrefix -> true)
       case key :: _ if key startsWith "-" => printUsage(s"Unknown option $key")
       case classNames => CLIOpts(SrcClassNames -> classNames)
@@ -52,8 +54,9 @@ object CLI {
       s"""
          |Usage: java com.mpc.scalats.Main
          |        [${OutFile.key} out.ts]    # output file
-         |        [${OptionToNullable.key}]  # convert Option to nullable
-         |        [${PrependIPrefix.key}]    # prefix interface names with I
+         |        [${OptionToNullable.key}]  # emit `Option` as `nullable`
+         |        [${TraitToType.key}]       # emit `trait` as `type`
+         |        [${PrependIPrefix.key}]    # prefix interface names with `I`
          |        class_name [class_name ...]"""
         .stripMargin)
     sys.exit(1)

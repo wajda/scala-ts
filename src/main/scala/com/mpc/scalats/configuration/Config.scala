@@ -6,5 +6,6 @@ package com.mpc.scalats.configuration
 case class Config(
   optionToNullable: Boolean = true,
   optionToUndefined: Boolean = false,
-  prependIPrefix: Boolean = true
+  prependIPrefix: Boolean = true,
+  emitInterfacesAsTypes: Boolean = false
 )

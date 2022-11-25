@@ -31,6 +31,8 @@ object CLIOpts {
 
   case object OptionToUndefined extends Key[Boolean]("--option-to-undefined")
 
+  case object TraitToType extends Key[Boolean]("--trait-to-type")
+
   case object PrependIPrefix extends Key[Boolean]("--prepend-I-prefix")
 
 }

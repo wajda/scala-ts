@@ -1,6 +1,7 @@
 package com.mpc.scalats.core
 
 import com.mpc.scalats.StreamFixture
+import com.mpc.scalats.configuration.Config
 import com.mpc.scalats.core.TypeScriptModel.AccessModifier.{Private, Public}
 import com.mpc.scalats.core.TypeScriptModel._
 import org.scalactic.StringNormalizations._
@@ -15,7 +16,7 @@ class TypeScriptEmitterSpec
     with StreamFixture {
 
   it should "emit nothing for empty declaration list" in {
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(Nil, _))
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(Nil, _, Config()))
 
     result should be(empty)
   }
@@ -37,7 +38,7 @@ class TypeScriptEmitterSpec
       )
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _))
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
 
     result should equal(
       """
@@ -49,6 +50,40 @@ class TypeScriptEmitterSpec
         |  aNumber: number;
         |  aDate: Date;
         |  aDateTime: Date;
+        |}
+        |""".stripMargin
+    )(after being trimmed)
+  }
+
+  it should "emit a type" in {
+    val decls = List(
+      InterfaceDeclaration(
+        "Foo",
+        List(
+          Member("aNull", NullRef),
+          Member("anUndefined", UndefinedRef),
+          Member("aString", StringRef),
+          Member("aBoolean", BooleanRef),
+          Member("aNumber", NumberRef),
+          Member("aDate", DateRef),
+          Member("aDateTime", DateTimeRef)
+        ),
+        Nil
+      )
+    )
+
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config(emitInterfacesAsTypes = true)))
+
+    result should equal(
+      """
+        |export type Foo = {
+        |  aNull: null,
+        |  anUndefined: undefined,
+        |  aString: string,
+        |  aBoolean: boolean,
+        |  aNumber: number,
+        |  aDate: Date,
+        |  aDateTime: Date,
         |}
         |""".stripMargin
     )(after being trimmed)
@@ -73,7 +108,7 @@ class TypeScriptEmitterSpec
       )
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _))
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
 
     result should equal(
       """
@@ -103,7 +138,7 @@ class TypeScriptEmitterSpec
       ConstantDeclaration(Member("ADate2", DateRef), PrimitiveValue(1, DateRef))
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _))
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
 
     result should equal(
       """
@@ -141,7 +176,7 @@ class TypeScriptEmitterSpec
       )))
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _))
+    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
 
     result should equal(
       """

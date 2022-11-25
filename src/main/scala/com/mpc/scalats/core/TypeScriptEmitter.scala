@@ -1,5 +1,6 @@
 package com.mpc.scalats.core
 
+import com.mpc.scalats.configuration.Config
 import com.mpc.scalats.core.TypeScriptModel.AccessModifier.{Private, Public}
 
 import java.io.PrintStream
@@ -10,10 +11,10 @@ object TypeScriptEmitter {
 
   import TypeScriptModel._
 
-  def emit(declaration: List[Declaration], out: PrintStream): Unit = {
+  def emit(declaration: List[Declaration], out: PrintStream, config: Config): Unit = {
     declaration foreach {
       case decl: InterfaceDeclaration =>
-        emitInterfaceDeclaration(decl, out)
+        emitInterfaceDeclaration(decl, out, config.emitInterfacesAsTypes)
       case decl: ClassDeclaration =>
         emitClassDeclaration(decl, out)
       case decl: ConstantDeclaration =>
@@ -55,13 +56,14 @@ object TypeScriptEmitter {
     }
   }
 
-  private def emitInterfaceDeclaration(decl: InterfaceDeclaration, out: PrintStream): Unit = {
+  private def emitInterfaceDeclaration(decl: InterfaceDeclaration, out: PrintStream, emitAsType: Boolean): Unit = {
     val InterfaceDeclaration(name, members, typeParams) = decl
-    out.print(s"export interface $name")
+    out.print(if (emitAsType) s"export type $name =" else s"export interface $name")
     emitTypeParams(decl.typeParams, out)
     out.println(" {")
     members foreach { member =>
-      out.println(s"  ${member.name}: ${getTypeRefString(member.typeRef)};")
+      out.print(s"  ${member.name}: ${getTypeRefString(member.typeRef)}")
+      out.println(if (emitAsType) "," else ";")
     }
     out.println("}")
     out.println()

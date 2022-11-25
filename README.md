@@ -53,7 +53,6 @@ tl;dr
             <arguments>
                 <argument>--out</argument>
                 <argument>${project.basedir}/target/generated-ts/my_model.ts</argument>
-                <argument>--emit-interfaces</argument>
                 <argument>--option-to-nullable</argument>
                 <argument>my.model.MyCaseClass</argument>
                 <argument>my.model.MyTrait</argument>
