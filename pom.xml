@@ -11,7 +11,7 @@
 
     <groupId>com.github.wajda</groupId>
     <artifactId>scala-ts_2.11</artifactId>
-    <version>0.4.1.7-SNAPSHOT</version>
+    <version>0.4.1.7</version>
 
     <name>Scala-ts</name>
     <description>Scala to TypeScript code generator</description>
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:wajda/scala-ts.git</connection>
         <developerConnection>scm:git:git@github.com:wajda/scala-ts.git</developerConnection>
         <url>https://github.com/wajda/scala-ts.git</url>
-      <tag>HEAD</tag>
+      <tag>release/0.4.1.7</tag>
   </scm>
 
     <distributionManagement>
