@@ -63,6 +63,7 @@
 
         <scala_2.11.version>2.11.12</scala_2.11.version>
         <scala_2.12.version>2.12.16</scala_2.12.version>
+        <scala_2.13.version>2.13.14</scala_2.13.version>
 
         <!-- Controlled by `scala-cross-build` plugin -->
         <scala.version>2.11.12</scala.version>
@@ -244,6 +245,14 @@
             <properties>
                 <scala.binary.version>2.12</scala.binary.version>
                 <scala.version>${scala_2.12.version}</scala.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>scala-2.13</id>
+            <properties>
+                <scala.binary.version>2.13</scala.binary.version>
+                <scala.version>${scala_2.13.version}</scala.version>
             </properties>
         </profile>
 
