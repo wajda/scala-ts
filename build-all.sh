@@ -18,7 +18,7 @@
 # THIS SCRIPT IS INTENDED FOR LOCAL DEV USAGE ONLY
 #
 
-SCALA_VERSIONS=(2.11 2.12)
+SCALA_VERSIONS=(2.11 2.12 2.13)
 
 BASE_DIR=$(dirname "$0")
 MODULE_DIRS=$(find "$BASE_DIR" -type f -name "pom.xml" -printf '%h\n')
