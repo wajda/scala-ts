@@ -58,9 +58,9 @@ object TypeScriptEmitter {
 
   private def emitInterfaceDeclaration(decl: InterfaceDeclaration, out: PrintStream, emitAsType: Boolean): Unit = {
     val InterfaceDeclaration(name, members, typeParams) = decl
-    out.print(if (emitAsType) s"export type $name =" else s"export interface $name")
+    out.print(if (emitAsType) s"export type $name" else s"export interface $name")
     emitTypeParams(decl.typeParams, out)
-    out.println(" {")
+    out.println(if (emitAsType) " = {" else " {")
     members foreach { member =>
       out.print(s"  ${member.name}: ${getTypeRefString(member.typeRef)}")
       out.println(if (emitAsType) "," else ";")
