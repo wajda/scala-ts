@@ -25,7 +25,7 @@ case class AuthorDto(id: UUID,
 
 object BasicExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     TypeScriptGenerator.generateFromClassNames(List(classOf[AuthorDto].getName), out = System.out)(Config())
   }
 
