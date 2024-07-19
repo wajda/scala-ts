@@ -143,14 +143,27 @@ object ScalaParser {
     }
   }
 
-  private def isNotScalaCollectionMember(classSymbol: ClassSymbol) =
-    !classSymbol.fullName.startsWith("scala.collection.")
+  private def isCollectionMember(classSymbol: ClassSymbol) = {
+    classSymbol.fullName.startsWith("scala.collection.") ||
+      classSymbol.fullName == "scala.Array" ||
+      classSymbol.fullName.startsWith("java.util.") &&
+        toClass(classSymbol).exists(classOf[java.util.Collection[_]].isAssignableFrom)
+  }
+
+  private def toClass(symbol: ClassSymbol): Option[Class[_]] = {
+    if (symbol.isClass) {
+      val classSymbol = symbol.asClass
+      Some(mirror.runtimeClass(classSymbol))
+    } else {
+      None
+    }
+  }
 
   private def isEntityType(scalaType: Type) = {
     val typeSymbol = scalaType.typeSymbol
     if (typeSymbol.isClass) {
       val classSymbol = typeSymbol.asClass
-      isNotScalaCollectionMember(classSymbol) && (classSymbol.isCaseClass || classSymbol.isTrait || typeSymbol.isModuleClass)
+      !isCollectionMember(classSymbol) && (classSymbol.isCaseClass || classSymbol.isTrait || typeSymbol.isModuleClass)
     }
     else false
   }

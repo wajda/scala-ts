@@ -13,7 +13,7 @@ import scala.reflect.runtime.universe._
  */
 class ScalaParserSpec extends AnyFlatSpec with Matchers {
 
-  it should "parse case class with one primitive member" in {
+  "ScalaParser" should "parse case class with one primitive member" in {
     val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass1Type))
     val expected = ClassEntity("TestClass1", List(EntityMember("name", StringRef)), List.empty)
     parsed should contain(expected)
