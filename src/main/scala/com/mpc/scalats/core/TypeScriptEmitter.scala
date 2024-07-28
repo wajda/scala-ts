@@ -11,8 +11,8 @@ object TypeScriptEmitter {
 
   import TypeScriptModel._
 
-  def emit(declaration: List[Declaration], out: PrintStream, config: Config): Unit = {
-    declaration foreach {
+  def emit(declarations: List[Declaration], out: PrintStream, config: Config): Unit = {
+    declarations foreach {
       case decl: InterfaceDeclaration =>
         emitInterfaceDeclaration(decl, out, config.emitInterfacesAsTypes)
       case decl: ClassDeclaration =>

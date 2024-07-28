@@ -18,15 +18,6 @@ object ScalaParser {
     typesToParse.map(parseType(_, None)).distinct
   }
 
-  def getValue(aType: Symbol, typeRef: TypeRef, anInstance: Any): Value = {
-    if (isEntityType(aType.info)) {
-      val entity = parseType(aType.info, Some(anInstance))
-      StructValue(entity.members: _*)
-    } else {
-      SimpleValue(anInstance, typeRef)
-    }
-  }
-
   private def parseType(aType: Type, maybeInstance0: Option[Any]): Entity = {
     val typeParams = aType.typeConstructor.dealias.etaExpand match {
       case polyType: PolyTypeApi => polyType.typeParams.map(_.name.decodedName.toString)
@@ -74,6 +65,15 @@ object ScalaParser {
         members.toList,
         typeParams
       )
+    }
+  }
+
+  def getValue(aType: Symbol, typeRef: TypeRef, anInstance: Any): Value = {
+    if (isEntityType(aType.info)) {
+      val entity = parseType(aType.info, Some(anInstance))
+      StructValue(entity.members: _*)
+    } else {
+      SimpleValue(anInstance, typeRef)
     }
   }
 
