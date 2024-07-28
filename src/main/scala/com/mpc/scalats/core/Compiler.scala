@@ -43,8 +43,7 @@ object Compiler {
     (member, value)
   }
 
-  private def compileValue(scalaValue: ScalaModel.Value)
-                          (implicit config: Config): TypeScriptModel.Value = scalaValue match {
+  private def compileValue(scalaValue: ScalaModel.Value)(implicit config: Config): TypeScriptModel.Value = scalaValue match {
     case ScalaModel.SimpleValue(value, typeRef) =>
       TypeScriptModel.PrimitiveValue(value, compileTypeRef(typeRef))
     case ScalaModel.StructValue(members@_*) =>
@@ -53,8 +52,7 @@ object Compiler {
       TypeScriptModel.ArrayValue(compileTypeRef(itemType), items.map(compileValue): _*)
   }
 
-  private def compileTypeRef(scalaTypeRef: ScalaModel.TypeRef)
-                            (implicit config: Config): TypeScriptModel.TypeRef = scalaTypeRef match {
+  private def compileTypeRef(scalaTypeRef: ScalaModel.TypeRef)(implicit config: Config): TypeScriptModel.TypeRef = scalaTypeRef match {
     case ScalaModel.IntRef =>
       TypeScriptModel.NumberRef
     case ScalaModel.LongRef =>

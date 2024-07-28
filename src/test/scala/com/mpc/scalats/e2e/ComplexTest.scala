@@ -4,7 +4,6 @@ import com.mpc.scalats.StreamFixture
 import com.mpc.scalats.configuration.Config
 import com.mpc.scalats.core.TypeScriptGenerator
 import com.mpc.scalats.e2e.ComplexTest.NodeDef
-import com.mpc.scalats.examples.AuthorDto
 import org.scalactic.StringNormalizations._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -23,10 +22,7 @@ class ComplexTest
     with StreamFixture {
 
   it should "work correctly" in {
-    val config = Config(
-      optionToNullable = true,
-      optionToUndefined = false
-    )
+    val config = Config()
 
     val result = withPrintStreamAsUTF8String(out => TypeScriptGenerator.generate(List(classOf[NodeDef].getName), getClass.getClassLoader, out)(config))
 
@@ -53,10 +49,15 @@ object ComplexTest {
 
   sealed trait CollectionDef {
     def name: String
+
     def indexDefs: Seq[IndexDef] = Nil
+
     def numShards: Int = 1
+
     def shardKeys: Seq[String] = Seq("_key")
+
     def replFactor: Int = 1
+
     def initData: Seq[AnyRef] = Nil
   }
 

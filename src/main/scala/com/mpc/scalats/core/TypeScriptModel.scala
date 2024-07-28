@@ -36,9 +36,11 @@ object TypeScriptModel {
 
   case class ClassConstructor(parameters: List[ClassConstructorParameter])
 
-  case class ClassConstructorParameter(name: String,
+  case class ClassConstructorParameter(
+    name: String,
     typeRef: TypeRef,
-    accessModifier: Option[AccessModifier])
+    accessModifier: Option[AccessModifier]
+  )
 
   case class UnknownTypeRef(name: String) extends TypeRef
 
