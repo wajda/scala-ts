@@ -11,7 +11,7 @@ import com.mpc.scalats.CLIOpts.Key
  * Time: 1:46 PM
  */
 
-class CLIOpts(table: Map[Key[_], Any]) {
+class CLIOpts(table: Map[Key[_], _]) {
   def +[T](kv: (Key[T], T)) = new CLIOpts(table + kv)
   def get[T](key: Key[T]): Option[T] = (table get key).asInstanceOf[Option[T]]
   def contains(key: Key[_]): Boolean = table contains key
@@ -26,6 +26,16 @@ object CLIOpts {
   case object SrcClassNames extends Key[List[String]](null)
 
   case object OutFile extends Key[File]("--out")
+
+  case object StringSingleQuotes extends Key[Boolean]("--string-single-quotes")
+
+  case object EmitSemicolons extends Key[Boolean]("--emit-semicolons")
+
+  case class IndentSize(indent: Int = IndentSize.Default)
+
+  object IndentSize extends Key[Int]("--indent-size") {
+    val Default = 2
+  }
 
   case object OptionToNullable extends Key[Boolean]("--option-to-nullable")
 

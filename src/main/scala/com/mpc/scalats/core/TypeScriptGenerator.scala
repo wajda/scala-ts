@@ -13,7 +13,8 @@ object TypeScriptGenerator {
   def generate(
     typeNames: List[String],
     classLoader: ClassLoader = getClass.getClassLoader,
-    out: PrintStream)
+    out: PrintStream
+  )
     (implicit config: Config): Unit = {
 
     val mirror = runtimeMirror(classLoader)
@@ -25,7 +26,8 @@ object TypeScriptGenerator {
   def generate(caseClasses: List[Type], modules: List[ModuleSymbol], out: PrintStream)(implicit config: Config): Unit = {
     val scalaEntities = ScalaParser.parse(caseClasses, modules)
     val tsDeclarations = Compiler.compile(scalaEntities)
-    TypeScriptEmitter.emit(tsDeclarations, out, config)
+    val tsCodeEmitter = new TypeScriptEmitter(config)
+    tsCodeEmitter.emit(tsDeclarations, out)
   }
 
 }

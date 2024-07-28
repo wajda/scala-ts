@@ -7,11 +7,15 @@ import java.io.PrintStream
 import java.util.Date
 import scala.collection.mutable
 
-object TypeScriptEmitter {
+class TypeScriptEmitter(config: Config) {
 
   import TypeScriptModel._
 
-  def emit(declarations: List[Declaration], out: PrintStream, config: Config): Unit = {
+  private val `"` = if (config.stringWithSingleQuotes) "'" else "\""
+  private val ` ` = " " * config.indentSize
+  private val `;` = if (config.emitSemicolons) ";" else ""
+
+  def emit(declarations: List[Declaration], out: PrintStream): Unit = {
     declarations foreach {
       case decl: InterfaceDeclaration =>
         emitInterfaceDeclaration(decl, out, config.emitInterfacesAsTypes)
@@ -30,7 +34,7 @@ object TypeScriptEmitter {
     if (typeName != "object") {
       out.print(s": $typeName")
     }
-    out.println(s" = ${emitValue(value, 0)};")
+    out.println(s" = ${emitValue(value, 0)}${`;`}")
     out.println()
   }
 
@@ -39,20 +43,19 @@ object TypeScriptEmitter {
       // Primitive value
       case PrimitiveValue(null, NullRef) => "null"
       case PrimitiveValue(null, UndefinedRef) => "undefined"
-      case PrimitiveValue(v, StringRef) => s""""$v""""
+      case PrimitiveValue(v, StringRef) => s"""${`"`}$v${`"`}"""
       case PrimitiveValue(date: Date, DateRef) => s"new Date(${date.getTime})"
       case PrimitiveValue(millis: Number, DateRef) => s"new Date($millis)"
       case PrimitiveValue(v, _) => v.toString
 
       // Array value
       case ArrayValue(_, items@_*) =>
-        val tab = "  "
-        val margin = tab * indent
+        val margin = ` ` * indent
         val sb = new mutable.StringBuilder
         sb.append("[\n")
         items.zipWithIndex.foreach {
           case (item, i) =>
-            sb.append(s"$margin$tab${emitValue(item, indent + 1)}")
+            sb.append(s"$margin${` `}${emitValue(item, indent + 1)}")
             if (i < items.length - 1) sb.append(",")
             sb.append("\n")
         }
@@ -61,13 +64,12 @@ object TypeScriptEmitter {
 
       // Object value
       case ObjectValue(members) =>
-        val tab = "  "
-        val margin = tab * indent
+        val margin = ` ` * indent
         val sb = new mutable.StringBuilder
         sb.append("{\n")
         members.zipWithIndex.foreach {
           case ((member, memberValue), i) =>
-            sb.append(s"$margin$tab${member.name}: ${emitValue(memberValue, indent + 1)}")
+            sb.append(s"$margin${` `}${member.name}: ${emitValue(memberValue, indent + 1)}")
             if (i < members.length - 1) sb.append(",")
             sb.append("\n")
         }
@@ -82,7 +84,7 @@ object TypeScriptEmitter {
     emitTypeParams(decl.typeParams, out)
     out.println(if (emitAsType) " = {" else " {")
     members foreach { member =>
-      out.print(s"  ${member.name}: ${getTypeRefString(member.typeRef)}")
+      out.print(s"${` `}${member.name}: ${getTypeRefString(member.typeRef)}")
       out.println(if (emitAsType) "," else ";")
     }
     out.println("}")

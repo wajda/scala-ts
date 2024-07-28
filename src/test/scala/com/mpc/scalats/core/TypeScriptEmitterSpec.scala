@@ -16,7 +16,7 @@ class TypeScriptEmitterSpec
     with StreamFixture {
 
   it should "emit nothing for empty declaration list" in {
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(Nil, _, Config()))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config()).emit(Nil, _))
 
     result should be(empty)
   }
@@ -38,7 +38,7 @@ class TypeScriptEmitterSpec
       )
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config()).emit(decls, _))
 
     result should equal(
       """
@@ -72,7 +72,7 @@ class TypeScriptEmitterSpec
       )
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config(emitInterfacesAsTypes = true)))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config(emitInterfacesAsTypes = true)).emit(decls, _))
 
     result should equal(
       """
@@ -108,7 +108,7 @@ class TypeScriptEmitterSpec
       )
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config()).emit(decls, _))
 
     result should equal(
       """
@@ -138,7 +138,7 @@ class TypeScriptEmitterSpec
       ConstantDeclaration(Member("ADate2", DateRef), PrimitiveValue(1, DateRef))
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config(emitSemicolons = true)).emit(decls, _))
 
     result should equal(
       """
@@ -184,16 +184,16 @@ class TypeScriptEmitterSpec
       )))
     )
 
-    val result = withPrintStreamAsUTF8String(TypeScriptEmitter.emit(decls, _, Config()))
+    val result = withPrintStreamAsUTF8String(new TypeScriptEmitter(Config()).emit(decls, _))
 
     result should equal(
       """
-        |export const ANumber: number = 42;
+        |export const ANumber: number = 42
         |
         |export const AnArray: number[] = [
         |  71,
         |  72
-        |];
+        |]
         |
         |export const ANestedArray: number[][] = [
         |  [
@@ -204,10 +204,10 @@ class TypeScriptEmitterSpec
         |    91,
         |    92
         |  ]
-        |];
+        |]
         |
         |export const AnEmptyObject = {
-        |};
+        |}
         |
         |export const NonEmptyObject = {
         |  APrimitive: 42,
@@ -220,7 +220,7 @@ class TypeScriptEmitterSpec
         |      ASubSubPrimitive: "a string"
         |    }
         |  }
-        |};
+        |}
         |""".stripMargin)(after being trimmed)
   }
 
