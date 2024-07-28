@@ -28,6 +28,10 @@ object TypeScriptModel {
     override def typeRef: TypeRef = ObjectRef
   }
 
+  case class ArrayValue(itemType: TypeRef, items: Value*) extends Value {
+    override def typeRef: TypeRef = ArrayRef(itemType)
+  }
+
   case class ClassDeclaration(name: String, constructor: ClassConstructor, typeParams: List[String]) extends Declaration
 
   case class ClassConstructor(parameters: List[ClassConstructorParameter])

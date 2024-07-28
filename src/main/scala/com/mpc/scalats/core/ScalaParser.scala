@@ -12,10 +12,35 @@ object ScalaParser {
 
   private val mirror = runtimeMirror(getClass.getClassLoader)
 
-  def parseCaseClasses(classTypes: List[Type]): List[Entity] = {
-    val involvedTypes = classTypes flatMap getInvolvedTypes(Set.empty)
-    val typesToParse = (involvedTypes filter isEntityType).distinct
-    typesToParse.map(parseType(_, None)).distinct
+  def parse(types: List[Type], moduleSymbols: List[ModuleSymbol]): List[Entity] = {
+    val involvedTypes = types flatMap getInvolvedTypes(Set.empty)
+    val classTypes = (involvedTypes filter isEntityType).distinct
+    val classEntities = classTypes.map(parseType(_, None)).distinct
+
+    val objectEntities = for {
+      objEntity <- moduleSymbols.map(parseModule)
+      if objEntity.members.nonEmpty
+    } yield {
+      // Avoid name clashes between types/interfaces and constant objects
+      if (classEntities.exists(_.name == objEntity.name)) {
+        objEntity.copy(name = objEntity.name + "Constants")
+      } else {
+        objEntity
+      }
+    }
+
+    classEntities ++ objectEntities
+  }
+
+  private def parseModule(aSymbol: ModuleSymbol): ObjectEntity = {
+    val moduleName = aSymbol.name.toString
+    val moduleInstance = mirror.reflectModule(aSymbol).instance
+    val moduleMembers = parseType(aSymbol.info, Some(moduleInstance)).members
+
+    ObjectEntity(
+      moduleName,
+      moduleMembers
+    )
   }
 
   private def parseType(aType: Type, maybeInstance0: Option[Any]): Entity = {
@@ -46,12 +71,8 @@ object ScalaParser {
         val memberTypeRef = maybeValue.map(_.typeRef).getOrElse(memberTypeRef0)
         EntityMember(memberName, memberTypeRef, maybeValue)
       case moduleMember: ModuleSymbol if moduleMember.isModule =>
-        val memberName = moduleMember.name.toString
-        val moduleInstance = mirror.reflectModule(moduleMember).instance
-
-        val moduleMembers = parseType(moduleMember.info, Some(moduleInstance)).members
-
-        EntityMember(memberName, StructRef, Some(StructValue(moduleMembers: _*)))
+        val ObjectEntity(memberName, subMembers) = parseModule(moduleMember)
+        EntityMember(memberName, StructRef, Some(StructValue(subMembers: _*)))
     }
 
     if (isObject) {
@@ -72,8 +93,15 @@ object ScalaParser {
     if (isEntityType(aType.info)) {
       val entity = parseType(aType.info, Some(anInstance))
       StructValue(entity.members: _*)
-    } else {
-      SimpleValue(anInstance, typeRef)
+    } else typeRef match {
+      case seqRef: SeqRef =>
+        val seqInstance = anInstance.asInstanceOf[Seq[_]]
+        val items = seqInstance.map { item =>
+          getValue(aType, seqRef.innerType, item)
+        }
+        SeqValue(seqRef.innerType, items: _*)
+      case _ =>
+        SimpleValue(anInstance, typeRef)
     }
   }
 
@@ -164,6 +192,17 @@ object ScalaParser {
     if (typeSymbol.isClass) {
       val classSymbol = typeSymbol.asClass
       !isCollectionMember(classSymbol) && (classSymbol.isCaseClass || classSymbol.isTrait || typeSymbol.isModuleClass)
+    }
+    else false
+  }
+
+  private def isIndexedCollectionType(scalaType: Type) = {
+    val typeSymbol = scalaType.typeSymbol
+    if (typeSymbol.isClass) {
+      val classSymbol = typeSymbol.asClass
+      val fullName = classSymbol.fullName
+      fullName.startsWith("scala.collection.") &&
+        (fullName.endsWith("List") || fullName.endsWith("Seq") || fullName.endsWith("Vector"))
     }
     else false
   }

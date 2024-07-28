@@ -25,7 +25,12 @@ object TypeScriptEmitter {
   private def emitConstant(decl: ConstantDeclaration, out: PrintStream): Unit = {
     val ConstantDeclaration(Member(name, typeRef), value) = decl
     assume(typeRef == value.typeRef)
-    out.println(s"export const $name: ${getTypeRefString(typeRef)} = ${emitValue(value, 0)};")
+    out.print(s"export const $name")
+    val typeName = getTypeRefString(typeRef)
+    if (typeName != "object") {
+      out.print(s": $typeName")
+    }
+    out.println(s" = ${emitValue(value, 0)};")
     out.println()
   }
 
@@ -38,6 +43,21 @@ object TypeScriptEmitter {
       case PrimitiveValue(date: Date, DateRef) => s"new Date(${date.getTime})"
       case PrimitiveValue(millis: Number, DateRef) => s"new Date($millis)"
       case PrimitiveValue(v, _) => v.toString
+
+      // Array value
+      case ArrayValue(_, items@_*) =>
+        val tab = "  "
+        val margin = tab * indent
+        val sb = new mutable.StringBuilder
+        sb.append("[\n")
+        items.zipWithIndex.foreach {
+          case (item, i) =>
+            sb.append(s"$margin$tab${emitValue(item, indent + 1)}")
+            if (i < items.length - 1) sb.append(",")
+            sb.append("\n")
+        }
+        sb.append(s"$margin]")
+        sb.toString()
 
       // Object value
       case ObjectValue(members) =>

@@ -1,7 +1,7 @@
 package com.mpc.scalats.core
 
 import com.mpc.scalats.configuration.Config
-import com.mpc.scalats.core.ScalaModel.{ClassEntity, EntityMember, ObjectEntity}
+import com.mpc.scalats.core.ScalaModel.{ClassEntity, ObjectEntity}
 import com.mpc.scalats.core.TypeScriptModel.{NullRef, ObjectRef, UndefinedRef}
 
 /**
@@ -39,18 +39,22 @@ object Compiler {
       scalaMember.name,
       compileTypeRef(scalaMember.typeRef)
     )
-    val value = scalaMember.valueOpt.get match {
-      case sv:ScalaModel.SimpleValue =>
-        TypeScriptModel.PrimitiveValue(sv.value, compileTypeRef(sv.typeRef))
-      case sv:ScalaModel.StructValue =>
-        TypeScriptModel.ObjectValue(sv.members.map(compileMember).toList)
-    }
+    val value = compileValue(scalaMember.valueOpt.get)
     (member, value)
   }
 
-  private def compileTypeRef(
-    scalaTypeRef: ScalaModel.TypeRef
-  )(implicit config: Config): TypeScriptModel.TypeRef = scalaTypeRef match {
+  private def compileValue(scalaValue: ScalaModel.Value)
+                          (implicit config: Config): TypeScriptModel.Value = scalaValue match {
+    case ScalaModel.SimpleValue(value, typeRef) =>
+      TypeScriptModel.PrimitiveValue(value, compileTypeRef(typeRef))
+    case ScalaModel.StructValue(members@_*) =>
+      TypeScriptModel.ObjectValue(members.map(compileMember).toList)
+    case ScalaModel.SeqValue(itemType, items@_*) =>
+      TypeScriptModel.ArrayValue(compileTypeRef(itemType), items.map(compileValue): _*)
+  }
+
+  private def compileTypeRef(scalaTypeRef: ScalaModel.TypeRef)
+                            (implicit config: Config): TypeScriptModel.TypeRef = scalaTypeRef match {
     case ScalaModel.IntRef =>
       TypeScriptModel.NumberRef
     case ScalaModel.LongRef =>

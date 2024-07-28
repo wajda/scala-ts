@@ -6,18 +6,49 @@ object ScalaModel {
     def isKnown: Boolean
   }
 
-  case class OptionRef(innerType: TypeRef) extends KnownTypeRef
+  trait KnownTypeRef extends TypeRef {
+    override def isKnown: Boolean = true
+  }
 
-  case class UnionRef(innerType: TypeRef, innerType2: TypeRef) extends KnownTypeRef
+  trait SimpleTypeRef extends KnownTypeRef
 
-  case class MapRef(keyType: TypeRef, valueType: TypeRef) extends KnownTypeRef
+  trait ComplexTypeRef extends KnownTypeRef
 
-  case class CaseClassRef(name: String, typeArgs: List[TypeRef]) extends KnownTypeRef
+  case class TypeParamRef(name: String) extends KnownTypeRef
 
-  case class SeqRef(innerType: TypeRef) extends KnownTypeRef
+  case object IntRef extends SimpleTypeRef
+
+  case object LongRef extends SimpleTypeRef
+
+  case object DoubleRef extends SimpleTypeRef
+
+  case object BooleanRef extends SimpleTypeRef
+
+  case object StringRef extends SimpleTypeRef
+
+  case object DateRef extends SimpleTypeRef
+
+  case object DateTimeRef extends SimpleTypeRef
+
+  case object StructRef extends ComplexTypeRef
+
+  case class OptionRef(innerType: TypeRef) extends ComplexTypeRef
+
+  case class UnionRef(innerType: TypeRef, innerType2: TypeRef) extends ComplexTypeRef
+
+  case class MapRef(keyType: TypeRef, valueType: TypeRef) extends ComplexTypeRef
+
+  case class CaseClassRef(name: String, typeArgs: List[TypeRef]) extends ComplexTypeRef
+
+  case class SeqRef(innerType: TypeRef) extends ComplexTypeRef
+
+  case class UnknownTypeRef(name: String) extends TypeRef {
+    override def isKnown: Boolean = false
+  }
 
   trait Entity {
     def name: String
+
     def members: List[EntityMember]
   }
 
@@ -43,30 +74,7 @@ object ScalaModel {
     override def typeRef: TypeRef = StructRef
   }
 
-  trait KnownTypeRef extends TypeRef {
-    override def isKnown: Boolean = true
+  case class SeqValue(itemType: TypeRef, items: Value*) extends Value {
+    override def typeRef: TypeRef = SeqRef(itemType)
   }
-
-  case class UnknownTypeRef(name: String) extends TypeRef {
-    override def isKnown: Boolean = false
-  }
-
-  case class TypeParamRef(name: String) extends KnownTypeRef
-
-  case object IntRef extends KnownTypeRef
-
-  case object LongRef extends KnownTypeRef
-
-  case object DoubleRef extends KnownTypeRef
-
-  case object BooleanRef extends KnownTypeRef
-
-  case object StringRef extends KnownTypeRef
-
-  case object DateRef extends KnownTypeRef
-
-  case object DateTimeRef extends KnownTypeRef
-
-  case object StructRef extends KnownTypeRef
-
 }

@@ -16,7 +16,7 @@ case class Zoo(pets: Seq[Pet])
 object TraitExample {
 
   def main(args: Array[String]): Unit = {
-    TypeScriptGenerator.generateFromClassNames(
+    TypeScriptGenerator.generate(
       List(
         classOf[Zoo].getName,
         classOf[Cat].getName,

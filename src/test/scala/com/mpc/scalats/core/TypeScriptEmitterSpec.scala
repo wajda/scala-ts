@@ -161,6 +161,14 @@ class TypeScriptEmitterSpec
 
   it should "emit objects" in {
     val decls = List(
+      ConstantDeclaration(Member("ANumber", NumberRef), PrimitiveValue(42, NumberRef)),
+      ConstantDeclaration(Member("AnArray", ArrayRef(NumberRef)), ArrayValue(NumberRef, PrimitiveValue(71, NumberRef), PrimitiveValue(72, NumberRef))),
+      ConstantDeclaration(Member("ANestedArray", ArrayRef(ArrayRef(NumberRef))),
+        ArrayValue(
+          ArrayRef(NumberRef),
+          ArrayValue(NumberRef, PrimitiveValue(81, NumberRef), PrimitiveValue(82, NumberRef)),
+          ArrayValue(NumberRef, PrimitiveValue(91, NumberRef), PrimitiveValue(92, NumberRef))
+        )),
       ConstantDeclaration(Member("AnEmptyObject", ObjectRef), ObjectValue(Nil)),
       ConstantDeclaration(Member("NonEmptyObject", ObjectRef), ObjectValue(List(
         (Member("APrimitive", NumberRef), PrimitiveValue(42, NumberRef)),
@@ -180,10 +188,28 @@ class TypeScriptEmitterSpec
 
     result should equal(
       """
-        |export const AnEmptyObject: object = {
+        |export const ANumber: number = 42;
+        |
+        |export const AnArray: number[] = [
+        |  71,
+        |  72
+        |];
+        |
+        |export const ANestedArray: number[][] = [
+        |  [
+        |    81,
+        |    82
+        |  ],
+        |  [
+        |    91,
+        |    92
+        |  ]
+        |];
+        |
+        |export const AnEmptyObject = {
         |};
         |
-        |export const NonEmptyObject: object = {
+        |export const NonEmptyObject = {
         |  APrimitive: 42,
         |  ASubObject1: {
         |    ASubPrimitive1: 111

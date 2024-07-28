@@ -31,7 +31,7 @@ object CLI {
       emitInterfacesAsTypes = options contains TraitToType
     )
 
-    try TypeScriptGenerator.generateFromClassNames(classNames, out = out)(config)
+    try TypeScriptGenerator.generate(classNames, out = out)(config)
     finally out.close()
   }
 

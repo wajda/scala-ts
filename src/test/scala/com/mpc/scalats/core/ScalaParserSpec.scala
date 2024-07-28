@@ -14,19 +14,19 @@ import scala.reflect.runtime.universe._
 class ScalaParserSpec extends AnyFlatSpec with Matchers {
 
   "ScalaParser" should "parse case class with one primitive member" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass1Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass1Type), Nil)
     val expected = ClassEntity("TestClass1", List(EntityMember("name", StringRef)), List.empty)
     parsed should contain(expected)
   }
 
   it should "parse generic case class with one member" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass2Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass2Type), Nil)
     val expected = ClassEntity("TestClass2", List(EntityMember("name", TypeParamRef("T"))), List("T"))
     parsed should contain(expected)
   }
 
   it should "parse generic case class with one member list of type parameter" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass3Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass3Type), Nil)
     val expected = ClassEntity(
       "TestClass3",
       List(EntityMember("name", SeqRef(TypeParamRef("T")))),
@@ -36,7 +36,7 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "parse generic case class with one optional member" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass5Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass5Type), Nil)
     val expected = ClassEntity(
       "TestClass5",
       List(EntityMember("name", OptionRef(TypeParamRef("T")))),
@@ -46,12 +46,12 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "correctly detect involved types" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass6Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass6Type), Nil)
     parsed should have length 6
   }
 
   it should "correctly handle either types" in {
-    val parsed = ScalaParser.parseCaseClasses(List(TestTypes.TestClass7Type))
+    val parsed = ScalaParser.parse(List(TestTypes.TestClass7Type), Nil)
     val expected = ClassEntity(
       "TestClass7",
       List(EntityMember("name", UnionRef(CaseClassRef("TestClass1", List()), CaseClassRef("TestClass1B", List())))),
@@ -61,18 +61,19 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "parse object alone" in {
-    val parsed = ScalaParser.parseCaseClasses(
+    val parsed = ScalaParser.parse(
       List(
         TestTypes.TestObjectType,
         TestTypes.TestTraitWithCompanionObjectType
-      )
+      ),
+      Nil
     )
 
     parsed should contain theSameElementsAs Seq(
       ObjectEntity(
         "Foo",
         List(
-          EntityMember("z", SeqRef(IntRef), SimpleValue(List(1, 2, 3), SeqRef(IntRef))),
+          EntityMember("z", SeqRef(IntRef), SeqValue(IntRef, SimpleValue(1, IntRef), SimpleValue(2, IntRef), SimpleValue(3, IntRef))),
           EntityMember("y", StringRef, SimpleValue("yyy", StringRef))
         )),
       ObjectEntity(
@@ -84,7 +85,7 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
           )),
           EntityMember("Bar", StructRef, StructValue()),
           EntityMember("Foo", StructRef, StructValue(
-            EntityMember("z", SeqRef(IntRef), SimpleValue(List(1, 2, 3), SeqRef(IntRef))),
+            EntityMember("z", SeqRef(IntRef), SeqValue(IntRef, SimpleValue(1, IntRef), SimpleValue(2, IntRef), SimpleValue(3, IntRef))),
             EntityMember("y", StringRef, SimpleValue("yyy", StringRef))
           )),
           EntityMember("x", IntRef, SimpleValue(42, IntRef))
