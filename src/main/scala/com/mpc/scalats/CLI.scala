@@ -12,7 +12,7 @@ object CLI {
   def main(args: Array[String]): Unit = {
     val options = parseArgs(args.toList)
 
-    val classNames: List[String] = options get SrcClassNames match {
+    val classNames: Seq[String] = options get SrcClassNames match {
       case Some(cns) => cns
       case _ => printUsage()
     }
@@ -39,7 +39,7 @@ object CLI {
     finally out.close()
   }
 
-  private def parseArgs(args: List[String]): CLIOpts = {
+  private def parseArgs(args: Seq[String]): CLIOpts = {
     args match {
       case Nil => CLIOpts.empty
       case OutFile.key :: outFileName :: restArgs => parseArgs(restArgs) + (OutFile -> new File(outFileName))

@@ -38,7 +38,7 @@ object ScalaModel {
 
   case class MapRef(keyType: TypeRef, valueType: TypeRef) extends ComplexTypeRef
 
-  case class CaseClassRef(name: String, typeArgs: List[TypeRef]) extends ComplexTypeRef
+  case class CaseClassRef(name: String, typeArgs: Seq[TypeRef]) extends ComplexTypeRef
 
   case class SeqRef(innerType: TypeRef) extends ComplexTypeRef
 
@@ -49,12 +49,12 @@ object ScalaModel {
   trait Entity {
     def name: String
 
-    def members: List[EntityMember]
+    def members: Seq[EntityMember]
   }
 
-  case class ClassEntity(name: String, members: List[EntityMember], params: List[String]) extends Entity
+  case class ClassEntity(name: String, members: Seq[EntityMember], params: Seq[String]) extends Entity
 
-  case class ObjectEntity(name: String, members: List[EntityMember]) extends Entity
+  case class ObjectEntity(name: String, members: Seq[EntityMember]) extends Entity
 
   case class EntityMember(name: String, typeRef: TypeRef, valueOpt: Option[Value])
 

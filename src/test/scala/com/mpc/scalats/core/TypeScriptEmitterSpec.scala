@@ -22,10 +22,10 @@ class TypeScriptEmitterSpec
   }
 
   it should "emit an interface" in {
-    val decls = List(
+    val decls = Seq(
       InterfaceDeclaration(
         "Foo",
-        List(
+        Seq(
           Member("aNull", NullRef),
           Member("anUndefined", UndefinedRef),
           Member("aString", StringRef),
@@ -56,10 +56,10 @@ class TypeScriptEmitterSpec
   }
 
   it should "emit a type" in {
-    val decls = List(
+    val decls = Seq(
       InterfaceDeclaration(
         "Foo",
-        List(
+        Seq(
           Member("aNull", NullRef),
           Member("anUndefined", UndefinedRef),
           Member("aString", StringRef),
@@ -90,11 +90,11 @@ class TypeScriptEmitterSpec
   }
 
   it should "emit an class" in {
-    val decls = List(
+    val decls = Seq(
       ClassDeclaration(
         "Bar",
         ClassConstructor(
-          List(
+          Seq(
             ClassConstructorParameter("aNull", NullRef, None),
             ClassConstructorParameter("anUndefined", UndefinedRef, None),
             ClassConstructorParameter("aString", StringRef, None),
@@ -128,7 +128,7 @@ class TypeScriptEmitterSpec
   }
 
   it should "emit primitive constants" in {
-    val decls = List(
+    val decls = Seq(
       ConstantDeclaration(Member("ANull", NullRef), PrimitiveValue(null, NullRef)),
       ConstantDeclaration(Member("AUndefined", UndefinedRef), PrimitiveValue(null, UndefinedRef)),
       ConstantDeclaration(Member("ANumber", NumberRef), PrimitiveValue(42, NumberRef)),
@@ -160,7 +160,7 @@ class TypeScriptEmitterSpec
   }
 
   it should "emit objects" in {
-    val decls = List(
+    val decls = Seq(
       ConstantDeclaration(Member("ANumber", NumberRef), PrimitiveValue(42, NumberRef)),
       ConstantDeclaration(Member("AnArray", ArrayRef(NumberRef)), ArrayValue(NumberRef, PrimitiveValue(71, NumberRef), PrimitiveValue(72, NumberRef))),
       ConstantDeclaration(Member("ANestedArray", ArrayRef(ArrayRef(NumberRef))),
@@ -170,14 +170,14 @@ class TypeScriptEmitterSpec
           ArrayValue(NumberRef, PrimitiveValue(91, NumberRef), PrimitiveValue(92, NumberRef))
         )),
       ConstantDeclaration(Member("AnEmptyObject", ObjectRef), ObjectValue(Nil)),
-      ConstantDeclaration(Member("NonEmptyObject", ObjectRef), ObjectValue(List(
+      ConstantDeclaration(Member("NonEmptyObject", ObjectRef), ObjectValue(Seq(
         (Member("APrimitive", NumberRef), PrimitiveValue(42, NumberRef)),
-        (Member("ASubObject1", ObjectRef), ObjectValue(List(
+        (Member("ASubObject1", ObjectRef), ObjectValue(Seq(
           (Member("ASubPrimitive1", NumberRef), PrimitiveValue(111, NumberRef))
         ))),
-        (Member("ASubObject2", ObjectRef), ObjectValue(List(
+        (Member("ASubObject2", ObjectRef), ObjectValue(Seq(
           (Member("ASubPrimitive2", NumberRef), PrimitiveValue(222, NumberRef)),
-          (Member("ASubSubObject", ObjectRef), ObjectValue(List(
+          (Member("ASubSubObject", ObjectRef), ObjectValue(Seq(
             (Member("ASubSubPrimitive", StringRef), PrimitiveValue("a string", StringRef))
           )))
         )))

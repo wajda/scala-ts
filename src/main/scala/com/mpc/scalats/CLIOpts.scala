@@ -26,7 +26,7 @@ object CLIOpts {
 
   sealed abstract class Key[T](val key: String)
 
-  case object SrcClassNames extends Key[List[String]](null)
+  case object SrcClassNames extends Key[Seq[String]](null)
 
   case object OutFile extends Key[File]("--out")
 

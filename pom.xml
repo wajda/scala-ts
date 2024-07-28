@@ -40,8 +40,8 @@
         <connection>scm:git:git@github.com:wajda/scala-ts.git</connection>
         <developerConnection>scm:git:git@github.com:wajda/scala-ts.git</developerConnection>
         <url>https://github.com/wajda/scala-ts.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>

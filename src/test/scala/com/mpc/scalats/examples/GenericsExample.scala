@@ -18,7 +18,7 @@ case class Xyz(bars: Option[List[Option[Bar]]])
 object GenericsExample {
 
   def main(args: Array[String]): Unit = {
-    TypeScriptGenerator.generate(List(classOf[Xyz].getName), out = System.out)(Config())
+    TypeScriptGenerator.generate(Seq(classOf[Xyz].getName), out = System.out)(Config())
   }
 
 }

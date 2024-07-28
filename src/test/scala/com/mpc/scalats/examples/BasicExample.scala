@@ -18,10 +18,10 @@ case class AuthorDto(
   name: String,
   age: Option[Int],
   address: AddressDto,
-  nicknames: List[String],
+  nicknames: Seq[String],
   workAddress: Option[AddressDto],
   principal: AuthorDto,
-  books: List[Option[BookDto]],
+  books: Seq[Option[BookDto]],
   creationDate: Instant,
   birthday: LocalDate,
   isRetired: Boolean
@@ -30,7 +30,7 @@ case class AuthorDto(
 object BasicExample {
 
   def main(args: Array[String]): Unit = {
-    TypeScriptGenerator.generate(List(classOf[AuthorDto].getName), out = System.out)(Config())
+    TypeScriptGenerator.generate(Seq(classOf[AuthorDto].getName), out = System.out)(Config())
   }
 
 }

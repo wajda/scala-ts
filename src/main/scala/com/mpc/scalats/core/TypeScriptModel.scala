@@ -12,11 +12,11 @@ object TypeScriptModel {
 
   sealed trait AccessModifier
 
-  case class CustomTypeRef(name: String, typeArgs: List[TypeRef]) extends TypeRef
+  case class CustomTypeRef(name: String, typeArgs: Seq[TypeRef]) extends TypeRef
 
   case class ArrayRef(innerType: TypeRef) extends TypeRef
 
-  case class InterfaceDeclaration(name: String, members: List[Member], typeParams: List[String]) extends Declaration
+  case class InterfaceDeclaration(name: String, members: Seq[Member], typeParams: Seq[String]) extends Declaration
 
   case class ConstantDeclaration(member: Member, value: Value) extends Declaration
 
@@ -24,7 +24,7 @@ object TypeScriptModel {
 
   case class PrimitiveValue(value: Any, typeRef: TypeRef) extends Value
 
-  case class ObjectValue(members: List[(Member, Value)]) extends Value {
+  case class ObjectValue(members: Seq[(Member, Value)]) extends Value {
     override def typeRef: TypeRef = ObjectRef
   }
 
@@ -32,9 +32,9 @@ object TypeScriptModel {
     override def typeRef: TypeRef = ArrayRef(itemType)
   }
 
-  case class ClassDeclaration(name: String, constructor: ClassConstructor, typeParams: List[String]) extends Declaration
+  case class ClassDeclaration(name: String, constructor: ClassConstructor, typeParams: Seq[String]) extends Declaration
 
-  case class ClassConstructor(parameters: List[ClassConstructorParameter])
+  case class ClassConstructor(parameters: Seq[ClassConstructorParameter])
 
   case class ClassConstructorParameter(
     name: String,

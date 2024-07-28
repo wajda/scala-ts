@@ -11,7 +11,7 @@ import org.scalatest.matchers.should.Matchers
 object ComplexExample {
 
   def main(args: Array[String]): Unit = {
-    TypeScriptGenerator.generate(List(classOf[ComplexTest].getName), out = System.out)(Config())
+    TypeScriptGenerator.generate(Seq(classOf[ComplexTest].getName), out = System.out)(Config())
   }
 
 }
@@ -24,7 +24,7 @@ class ComplexTest
   it should "work correctly" in {
     val config = Config()
 
-    val result = withPrintStreamAsUTF8String(out => TypeScriptGenerator.generate(List(classOf[NodeDef].getName), getClass.getClassLoader, out)(config))
+    val result = withPrintStreamAsUTF8String(out => TypeScriptGenerator.generate(Seq(classOf[NodeDef].getName), out, getClass.getClassLoader)(config))
 
     result should equal(
       s"""

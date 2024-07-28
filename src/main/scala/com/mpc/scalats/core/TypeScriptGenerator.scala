@@ -11,23 +11,19 @@ import scala.reflect.runtime.universe._
 object TypeScriptGenerator {
 
   def generate(
-    typeNames: List[String],
-    classLoader: ClassLoader = getClass.getClassLoader,
-    out: PrintStream
+    typeNames: Seq[String],
+    out: PrintStream,
+    classLoader: ClassLoader = getClass.getClassLoader
   )
     (implicit config: Config): Unit = {
 
     val mirror = runtimeMirror(classLoader)
     val classes = typeNames map (mirror.staticClass(_).toType)
     val modules = typeNames map mirror.staticModule
-    generate(classes, modules, out)(config)
-  }
 
-  def generate(caseClasses: List[Type], modules: List[ModuleSymbol], out: PrintStream)(implicit config: Config): Unit = {
-    val scalaEntities = ScalaParser.parse(caseClasses, modules)
+    val scalaEntities = ScalaParser.parse(classes, modules)
     val tsDeclarations = Compiler.compile(scalaEntities)
     val tsCodeEmitter = new TypeScriptEmitter(config)
     tsCodeEmitter.emit(tsDeclarations, out)
   }
-
 }

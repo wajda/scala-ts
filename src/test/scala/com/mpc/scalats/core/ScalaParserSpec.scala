@@ -14,55 +14,55 @@ import scala.reflect.runtime.universe._
 class ScalaParserSpec extends AnyFlatSpec with Matchers {
 
   "ScalaParser" should "parse case class with one primitive member" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass1Type), Nil)
-    val expected = ClassEntity("TestClass1", List(EntityMember("name", StringRef)), List.empty)
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass1Type), Nil)
+    val expected = ClassEntity("TestClass1", Seq(EntityMember("name", StringRef)), List.empty)
     parsed should contain(expected)
   }
 
   it should "parse generic case class with one member" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass2Type), Nil)
-    val expected = ClassEntity("TestClass2", List(EntityMember("name", TypeParamRef("T"))), List("T"))
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass2Type), Nil)
+    val expected = ClassEntity("TestClass2", Seq(EntityMember("name", TypeParamRef("T"))), Seq("T"))
     parsed should contain(expected)
   }
 
   it should "parse generic case class with one member list of type parameter" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass3Type), Nil)
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass3Type), Nil)
     val expected = ClassEntity(
       "TestClass3",
-      List(EntityMember("name", SeqRef(TypeParamRef("T")))),
-      List("T")
+      Seq(EntityMember("name", SeqRef(TypeParamRef("T")))),
+      Seq("T")
     )
     parsed should contain(expected)
   }
 
   it should "parse generic case class with one optional member" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass5Type), Nil)
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass5Type), Nil)
     val expected = ClassEntity(
       "TestClass5",
-      List(EntityMember("name", OptionRef(TypeParamRef("T")))),
-      List("T")
+      Seq(EntityMember("name", OptionRef(TypeParamRef("T")))),
+      Seq("T")
     )
     parsed should contain(expected)
   }
 
   it should "correctly detect involved types" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass6Type), Nil)
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass6Type), Nil)
     parsed should have length 6
   }
 
   it should "correctly handle either types" in {
-    val parsed = ScalaParser.parse(List(TestTypes.TestClass7Type), Nil)
+    val parsed = ScalaParser.parse(Seq(TestTypes.TestClass7Type), Nil)
     val expected = ClassEntity(
       "TestClass7",
-      List(EntityMember("name", UnionRef(CaseClassRef("TestClass1", List()), CaseClassRef("TestClass1B", List())))),
-      List("T")
+      Seq(EntityMember("name", UnionRef(CaseClassRef("TestClass1", Seq()), CaseClassRef("TestClass1B", Seq())))),
+      Seq("T")
     )
     parsed should contain(expected)
   }
 
   it should "parse object alone" in {
     val parsed = ScalaParser.parse(
-      List(
+      Seq(
         TestTypes.TestObjectType,
         TestTypes.TestTraitWithCompanionObjectType
       ),
@@ -72,13 +72,13 @@ class ScalaParserSpec extends AnyFlatSpec with Matchers {
     parsed should contain theSameElementsAs Seq(
       ObjectEntity(
         "Foo",
-        List(
+        Seq(
           EntityMember("z", SeqRef(IntRef), SeqValue(IntRef, SimpleValue(1, IntRef), SimpleValue(2, IntRef), SimpleValue(3, IntRef))),
           EntityMember("y", StringRef, SimpleValue("yyy", StringRef))
         )),
       ObjectEntity(
         "TestTraitWithCompanionObject",
-        List(
+        Seq(
           EntityMember("bar", StructRef, StructValue(
             EntityMember("qux", IntRef, SimpleValue(777, IntRef)),
             EntityMember("baz", IntRef, SimpleValue(555, IntRef))
@@ -122,14 +122,14 @@ object ScalaParserSpec {
 
     case class TestClass2[T](name: T)
 
-    case class TestClass3[T](name: List[T])
+    case class TestClass3[T](name: Seq[T])
 
     case class TestClass4[T](name: TestClass3[T])
 
     case class TestClass5[T](name: Option[T])
 
 
-    case class TestClass6[T](name: Option[TestClass5[List[Option[TestClass4[String]]]]], age: TestClass3[TestClass2[TestClass1]])
+    case class TestClass6[T](name: Option[TestClass5[Seq[Option[TestClass4[String]]]]], age: TestClass3[TestClass2[TestClass1]])
 
     case class TestClass7[T](name: Either[TestClass1, TestClass1B])
 
@@ -140,7 +140,7 @@ object ScalaParserSpec {
 
       object Foo {
         val y: String = "yyy"
-        val z: List[Int] = List(1, 2, 3)
+        val z: Seq[Int] = Seq(1, 2, 3)
       }
 
       case class Bar(baz: Int, qux: Int)

@@ -15,7 +15,7 @@ class TypeScriptEmitter(config: Config) {
   private val ` ` = " " * config.indentSize
   private val `;` = if (config.emitSemicolons) ";" else ""
 
-  def emit(declarations: List[Declaration], out: PrintStream): Unit = {
+  def emit(declarations: Seq[Declaration], out: PrintStream): Unit = {
     declarations foreach {
       case decl: InterfaceDeclaration =>
         emitInterfaceDeclaration(decl, out, config.emitInterfacesAsTypes)
@@ -111,7 +111,7 @@ class TypeScriptEmitter(config: Config) {
     out.println("}")
   }
 
-  private def emitTypeParams(params: List[String], out: PrintStream): Unit =
+  private def emitTypeParams(params: Seq[String], out: PrintStream): Unit =
     if (params.nonEmpty) {
       out.print("<")
       out.print(params.mkString(", "))

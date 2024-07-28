@@ -17,7 +17,7 @@ object TraitExample {
 
   def main(args: Array[String]): Unit = {
     TypeScriptGenerator.generate(
-      List(
+      Seq(
         classOf[Zoo].getName,
         classOf[Cat].getName,
         classOf[Dog].getName

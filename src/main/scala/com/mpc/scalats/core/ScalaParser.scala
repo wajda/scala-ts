@@ -12,7 +12,7 @@ object ScalaParser {
 
   private val mirror = runtimeMirror(getClass.getClassLoader)
 
-  def parse(types: List[Type], moduleSymbols: List[ModuleSymbol]): List[Entity] = {
+  def parse(types: Seq[Type], moduleSymbols: Seq[ModuleSymbol]): Seq[Entity] = {
     val involvedTypes = types flatMap getInvolvedTypes(Set.empty)
     val classTypes = (involvedTypes filter isEntityType).distinct
     val classEntities = classTypes.map(parseType(_, None)).distinct
@@ -105,7 +105,7 @@ object ScalaParser {
     }
   }
 
-  private def getInvolvedTypes(alreadyExamined: Set[Type])(scalaType: Type): List[Type] = {
+  private def getInvolvedTypes(alreadyExamined: Set[Type])(scalaType: Type): Seq[Type] = {
     if (!alreadyExamined.contains(scalaType) && !scalaType.typeSymbol.isParameter) {
       val relevantMemberSymbols = scalaType.members.collect {
         case m: MethodSymbol if m.isCaseAccessor => m

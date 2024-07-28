@@ -23,7 +23,7 @@ object DataSourceActionTypeValues {
 object ObjectExample {
 
   def main(args: Array[String]): Unit = {
-    TypeScriptGenerator.generate(List("com.mpc.scalats.examples.DataSourceActionTypeValues"), out = System.out)(Config())
+    TypeScriptGenerator.generate(Seq("com.mpc.scalats.examples.DataSourceActionTypeValues"), out = System.out)(Config())
   }
 
 }

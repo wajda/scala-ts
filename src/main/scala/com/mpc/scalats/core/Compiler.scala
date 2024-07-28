@@ -9,7 +9,7 @@ import com.mpc.scalats.core.TypeScriptModel.{NullRef, ObjectRef, UndefinedRef}
  */
 object Compiler {
 
-  def compile(scalaEntities: List[ScalaModel.Entity])(implicit config: Config): List[TypeScriptModel.Declaration] = {
+  def compile(scalaEntities: Seq[ScalaModel.Entity])(implicit config: Config): Seq[TypeScriptModel.Declaration] = {
     scalaEntities map { scalaEntity =>
       compileEntity(scalaEntity)
     }
