@@ -43,13 +43,13 @@ class TypeScriptEmitterSpec
     result should equal(
       """
         |export interface Foo {
-        |  aNull: null;
-        |  anUndefined: undefined;
-        |  aString: string;
-        |  aBoolean: boolean;
-        |  aNumber: number;
-        |  aDate: Date;
-        |  aDateTime: Date;
+        |  aNull: null
+        |  anUndefined: undefined
+        |  aString: string
+        |  aBoolean: boolean
+        |  aNumber: number
+        |  aDate: Date
+        |  aDateTime: Date
         |}
         |""".stripMargin
     )(after being trimmed)
@@ -142,19 +142,19 @@ class TypeScriptEmitterSpec
 
     result should equal(
       """
-        |export const ANull: null = null;
+        |export const ANull: null = null as const;
         |
-        |export const AUndefined: undefined = undefined;
+        |export const AUndefined: undefined = undefined as const;
         |
-        |export const ANumber: number = 42;
+        |export const ANumber: number = 42 as const;
         |
-        |export const AString: string = "blah";
+        |export const AString: string = "blah" as const;
         |
-        |export const ABoolean: boolean = true;
+        |export const ABoolean: boolean = true as const;
         |
-        |export const ADate1: Date = new Date(1);
+        |export const ADate1: Date = new Date(1) as const;
         |
-        |export const ADate2: Date = new Date(1);
+        |export const ADate2: Date = new Date(1) as const;
         |
         |""".stripMargin)(after being trimmed)
   }
@@ -188,12 +188,12 @@ class TypeScriptEmitterSpec
 
     result should equal(
       """
-        |export const ANumber: number = 42
+        |export const ANumber: number = 42 as const
         |
         |export const AnArray: number[] = [
         |  71,
         |  72
-        |]
+        |] as const
         |
         |export const ANestedArray: number[][] = [
         |  [
@@ -204,10 +204,10 @@ class TypeScriptEmitterSpec
         |    91,
         |    92
         |  ]
-        |]
+        |] as const
         |
         |export const AnEmptyObject = {
-        |}
+        |} as const
         |
         |export const NonEmptyObject = {
         |  APrimitive: 42,
@@ -220,7 +220,7 @@ class TypeScriptEmitterSpec
         |      ASubSubPrimitive: "a string"
         |    }
         |  }
-        |}
+        |} as const
         |""".stripMargin)(after being trimmed)
   }
 

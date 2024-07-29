@@ -34,7 +34,7 @@ class TypeScriptEmitter(config: Config) {
     if (typeName != "object") {
       out.print(s": $typeName")
     }
-    out.println(s" = ${emitValue(value, 0)}${`;`}")
+    out.println(s" = ${emitValue(value, 0)} as const${`;`}")
     out.println()
   }
 
@@ -85,7 +85,7 @@ class TypeScriptEmitter(config: Config) {
     out.println(if (emitAsType) " = {" else " {")
     members foreach { member =>
       out.print(s"${` `}${member.name}: ${getTypeRefString(member.typeRef)}")
-      out.println(if (emitAsType) "," else ";")
+      out.println(if (emitAsType) "," else `;`)
     }
     out.println("}")
     out.println()
